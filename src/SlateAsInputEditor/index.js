@@ -358,13 +358,14 @@ const SlateAsInputEditor = React.forwardRef((props, ref) => {
     }
     if (isEditable(editor, 'paste')) {
       const transfer = getEventTransfer(event);
+      console.log('TYPEEE -- ', transfer.type);
       if (transfer.type === 'html') {
         const pluginManager = new PluginManager(plugins);
         const fromHtml = new FromHTML(pluginManager);
         // @ts-ignore
         const { document } = fromHtml.convert(editor, transfer.html);
-        editor.insertFragment(document);
-        return;
+        event.preventDefault();
+        return editor.insertFragment(document);
       }
     }
     return next();

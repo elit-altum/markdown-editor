@@ -1,19 +1,27 @@
+/* eslint-disable class-methods-use-this */
 import Html from 'slate-html-serializer';
 
 const BLOCK_TAGS = {
   p: 'paragraph',
   blockquote: 'block_quote',
-  pre: 'code',
+  pre: 'code_block',
   h1: 'heading_one',
   h2: 'heading_two',
   h3: 'heading_three',
   h4: 'heading_four',
   h5: 'heading_five',
   h6: 'heading_six',
+  li: 'list_item',
+  ul: 'ul_list',
+  ol: 'ol_list',
+  br: 'linebreak',
+  hr: 'horizontal_rule',
+  n: 'softbreak',
 };
 
 const MARK_TAGS = {
   strong: 'bold',
+  b: 'bold',
   em: 'italic',
   // u: 'underline',
   s: 'strikethrough',
@@ -30,11 +38,14 @@ export class FromHTML {
 
   convert(editor, html) {
     this.editor = editor;
-    this.serializer = new Html({ rules: [{ deserialize: this.serialize.bind(this) }] });
+    this.serializer = new Html({
+      rules: [{ deserialize: this.deserialize.bind(this) }],
+      defaultBlock: 'paragraph'
+    });
     return this.serializer.deserialize(html);
   }
 
-  serialize(el, next) {
+  deserialize(el, next) {
     /* Handling common block tags */
     const tag = el.tagName.toLowerCase();
     const block = BLOCK_TAGS[tag];
@@ -75,6 +86,7 @@ export class FromHTML {
     return undefined;
   }
 
+  /* Custom link handler */
   a(el, next) {
     return {
       object: 'inline',
@@ -82,6 +94,18 @@ export class FromHTML {
       nodes: next(el.childNodes),
       data: {
         href: el.getAttribute('href'),
+      },
+    };
+  }
+
+  img(el, next) {
+    return {
+      object: 'inline',
+      type: 'image',
+      nodes: next(el.childNodes),
+      data: {
+        href: el.src,
+        title: el.alt ? el.alt : ''
       },
     };
   }

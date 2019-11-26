@@ -31,8 +31,9 @@ export default class PluginManager {
     for (let n = 0; n < this.plugins.length; n += 1) {
       const plugin = this.plugins[n];
 
-      for (let i = 0; i < plugin.tags.length; i += 1) {
-        const tag = plugin.tags[i];
+      const tags = plugin.tags || [];
+      for (let i = 0; i < tags.length; i += 1) {
+        const tag = tags[i];
         const tagValue = tag[tagName];
 
         if (tagValue) {
