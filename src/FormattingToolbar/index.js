@@ -38,7 +38,7 @@ const ToolbarIcon = styled.svg`
   place-self: center;
   user-select: none !important;
   cursor: pointer;
-  background-color: ${props => props.background};
+  background-color: ${props => props.background || '#e0e0e0'};
   padding: ${props => props.padding};
   border-radius: 5px;
   &:hover {
