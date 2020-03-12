@@ -106,6 +106,7 @@ export default class FormatToolbar extends React.Component {
     this.removeLinkForm = this.removeLinkForm.bind(this);
     this.closeSetLinkForm = this.closeSetLinkForm.bind(this);
     this.renderLinkSetForm = this.renderLinkSetForm.bind(this);
+    this.handleCopyLink = this.handleCopyLink.bind(this);
   }
 
   componentDidMount() {
@@ -360,9 +361,22 @@ export default class FormatToolbar extends React.Component {
     );
   }
 
+  // Function to copy link text to clipboard
+  handleCopyLink (text) {
+    function listener(e) {
+      e.clipboardData.setData('text/plain', text);
+      e.preventDefault();
+    }
+
+    document.addEventListener('copy', listener);
+    document.execCommand('copy');
+    document.removeEventListener('copy', listener);
+  }
+
   /**
    * Render form in popup to set the link.
    */
+
   renderLinkSetForm() {
     const { popupPosition, popupStyle } = calculateLinkPopupPosition(
       this.props.editor,
@@ -440,6 +454,17 @@ export default class FormatToolbar extends React.Component {
                   <Button primary floated="right" type="submit">
                     Apply
                   </Button>
+                  {isLinkBool
+                  && action.isOnlyLink(this.props.editor)
+                  && selectedInlineHref && (
+                    <Button 
+                      primary 
+                      floated="left" 
+                      onClick={() => this.handleCopyLink(selectedInlineHref.data.get('href'))}
+                    >
+                    Copy
+                    </Button>
+                )}
                 </Form.Field>
               </Form>
             </Ref>
