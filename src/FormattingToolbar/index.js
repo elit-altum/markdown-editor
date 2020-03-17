@@ -22,6 +22,9 @@ import * as uListIcon from '../icons/UL';
 import * as hyperlinkIcon from '../icons/hyperlink';
 import * as undoIcon from '../icons/navigation-left';
 import * as redoIcon from '../icons/navigation-right';
+import CopyIcon from '../icons/copy';
+import RemoveIcon from '../icons/delete';
+import OpenLinkIcon from '../icons/open';
 
 import './toolbar.css';
 
@@ -46,6 +49,21 @@ const ToolbarIcon = styled.svg`
   }
 `;
 
+const LinkIconHolder = styled.div`
+  cursor: pointer;
+  width: 25px;
+  height: 25px;
+  border-radius: 3px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  padding: -2px 3px;
+  margin: 0 3px;
+  &:hover {
+    background-color: #eee;
+  }
+`
+
 const VertDivider = styled.div`
   box-sizing: border-box;
   height: 24px;
@@ -53,13 +71,6 @@ const VertDivider = styled.div`
   border: 1px solid ${props => props.color || '#EFEFEF'};
   top: 10px;
   place-self: center;
-`;
-
-const PopupLinkWrapper = styled.p`
-white-space : nowrap;
-overflow : hidden;
-text-overflow : ellipsis;
-max-width : 250px;
 `;
 
 /**
@@ -414,58 +425,74 @@ export default class FormatToolbar extends React.Component {
                         ? this.props.editor.value.focusText.text
                         : this.props.editor.value.fragment.text
                     }
+                    style={{
+                      'width': '200px'
+                    }}
                   />
                 </Form.Field>
-                <Form.Field>
-                  <label>Link URL</label>
-                  <Input
-                    ref={this.hyperlinkInputRef}
-                    placeholder={'http://example.com'}
-                    defaultValue={
-                      isLinkBool
-                      && action.isOnlyLink(this.props.editor)
-                      && selectedInlineHref
-                        ? selectedInlineHref.data.get('href')
-                        : ''
-                    }
-                    name="url"
-                  />
-                </Form.Field>
-                {isLinkBool
-                  && action.isOnlyLink(this.props.editor)
-                  && selectedInlineHref && (
-                    <PopupLinkWrapper>
-                   <a href={selectedInlineHref.data.get('href')}
-                   target='_blank'
-                   >
-                      {selectedInlineHref.data.get('href')}
-                    </a>
-                    </PopupLinkWrapper>
-                )}
-                <Form.Field>
-                  <Button
-                    secondary
-                    floated="right"
-                    disabled={!isLinkBool}
-                    onMouseDown={this.removeLinkForm}
+                <Form.Field style={{
+                  'display': 'flex',
+                  'flex-direction': 'row'
+                }}>
+                  <div>
+                    <label>Link URL</label>
+                    <Input
+                      ref={this.hyperlinkInputRef}
+                      placeholder={'http://example.com'}
+                      defaultValue={
+                        isLinkBool
+                        && action.isOnlyLink(this.props.editor)
+                        && selectedInlineHref
+                          ? selectedInlineHref.data.get('href')
+                          : ''
+                      }
+                      style={{
+                        'width': '200px'
+                      }}
+                      name="url"
+                    />
+                  </div>
+                  <Button 
+                    primary 
+                    floated="right" 
+                    type="submit"
+                    style={{
+                      'alignSelf': 'flex-end',
+                      'height': '38px',
+                      'margin-left': '10px'
+                    }}
                   >
-                    Remove
-                  </Button>
-                  <Button primary floated="right" type="submit">
                     Apply
                   </Button>
-                  {isLinkBool
-                  && action.isOnlyLink(this.props.editor)
-                  && selectedInlineHref && (
-                    <Button 
-                      primary 
-                      floated="left" 
-                      onClick={() => this.handleCopyLink(selectedInlineHref.data.get('href'))}
-                    >
-                    Copy
-                    </Button>
-                )}
                 </Form.Field>
+                {
+                    isLinkBool
+                    && action.isOnlyLink(this.props.editor)
+                    && (
+                      <Form.Field style={{
+                        'display': 'flex',
+                        'flex-direction': 'row'
+                      }}>
+                        <LinkIconHolder
+                          onClick={() => this.handleCopyLink(selectedInlineHref.data.get('href'))}
+                        >
+                          <CopyIcon/>
+                        </LinkIconHolder>
+                        <LinkIconHolder
+                          onClick={this.removeLinkForm}
+                        >
+                          <RemoveIcon />
+                        </LinkIconHolder>
+                        <a href={selectedInlineHref.data.get('href')}
+                        target='_blank'
+                        >
+                            <LinkIconHolder>
+                              <OpenLinkIcon />
+                            </LinkIconHolder>
+                        </a>
+                      </Form.Field>
+                    )
+                  }
               </Form>
             </Ref>
           }
