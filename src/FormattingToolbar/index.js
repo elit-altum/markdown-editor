@@ -62,7 +62,33 @@ const LinkIconHolder = styled.div`
   &:hover {
     background-color: #eee;
   }
-`
+`;
+
+const InputFieldWrapper = styled.div`
+  width: 270px;
+  display: flex;
+  flex-direction: column;
+`;
+
+const InputFieldLabel = styled.label`
+  font-weight: bold;
+  font-size: 12px;
+`;
+
+const InlineFormField = styled(Form.Field)`
+  display: flex;
+  flex-direction: row;
+`;
+
+const InlineFormButton = styled(Button)`
+  margin-left: 20px;
+  align-self: flex-end;
+  height: 38px;
+  background-color: #0043BA;
+  &:hover {
+    background-color: #265FC4;
+  }
+`;
 
 const VertDivider = styled.div`
   box-sizing: border-box;
@@ -416,26 +442,22 @@ export default class FormatToolbar extends React.Component {
             >
               <Form onSubmit={event => this.submitLinkForm(event, isLinkBool)}>
                 <Form.Field>
-                  <label>Link Text</label>
-                  <Input
-                    placeholder="Text"
-                    name="text"
-                    defaultValue={
-                      isLinkBool && !selectedText
-                        ? this.props.editor.value.focusText.text
-                        : this.props.editor.value.fragment.text
-                    }
-                    style={{
-                      'width': '200px'
-                    }}
-                  />
+                  <InputFieldWrapper>
+                    <InputFieldLabel>Link Text</InputFieldLabel>
+                    <Input
+                      placeholder="Text"
+                      name="text"
+                      defaultValue={
+                        isLinkBool && !selectedText
+                          ? this.props.editor.value.focusText.text
+                          : this.props.editor.value.fragment.text
+                      }
+                    />
+                  </InputFieldWrapper>
                 </Form.Field>
-                <Form.Field style={{
-                  'display': 'flex',
-                  'flex-direction': 'row'
-                }}>
-                  <div>
-                    <label>Link URL</label>
+                <InlineFormField>
+                  <InputFieldWrapper>
+                    <InputFieldLabel>Link URL</InputFieldLabel>
                     <Input
                       ref={this.hyperlinkInputRef}
                       placeholder={'http://example.com'}
@@ -446,33 +468,23 @@ export default class FormatToolbar extends React.Component {
                           ? selectedInlineHref.data.get('href')
                           : ''
                       }
-                      style={{
-                        'width': '200px'
-                      }}
                       name="url"
                     />
-                  </div>
-                  <Button 
-                    primary 
-                    floated="right" 
+                  </InputFieldWrapper>
+                  <InlineFormButton
+                    primary
                     type="submit"
-                    style={{
-                      'alignSelf': 'flex-end',
-                      'height': '38px',
-                      'margin-left': '10px'
-                    }}
+                    floated="right"
+                    style={{'margin-left' : '10px'}}
                   >
                     Apply
-                  </Button>
-                </Form.Field>
+                  </InlineFormButton>
+                </InlineFormField>
                 {
                     isLinkBool
                     && action.isOnlyLink(this.props.editor)
                     && (
-                      <Form.Field style={{
-                        'display': 'flex',
-                        'flex-direction': 'row'
-                      }}>
+                      <InlineFormField>
                         <LinkIconHolder
                           onClick={() => this.handleCopyLink(selectedInlineHref.data.get('href'))}
                         >
@@ -490,7 +502,7 @@ export default class FormatToolbar extends React.Component {
                               <OpenLinkIcon />
                             </LinkIconHolder>
                         </a>
-                      </Form.Field>
+                      </InlineFormField>
                     )
                   }
               </Form>
